@@ -1,36 +1,31 @@
-
 const fm = FileManager.iCloud();
-const path = fm.joinPath(fm.documentsDirectory(), "widget_url.txt");
+
+const scriptableDir = fm.documentsDirectory();
+const shortcutsDir = scriptableDir.replace("iCloud~dk~simonbs~Scriptable", "iCloud~is~workflow~my~workflows");
+const path = fm.joinPath(shortcutsDir, "wu/link.txt");
 
 let imgUrl = "https://widgetuse.github.io/id1.png";
 
 if (fm.fileExists(path)) {
-  const savedUrl = fm.readString(path).trim();
-  if (savedUrl.length > 0) {
-    imgUrl = savedUrl;
+  if (!fm.isFileDownloaded(path)) {
+    await fm.downloadFileFromiCloud(path);
   }
+  imgUrl = fm.readString(path).trim();
 }
+
+const req = new Request(imgUrl);
+const image = await req.loadImage();
 
 const widget = new ListWidget();
 widget.backgroundColor = new Color("#0a0c10");
 
-try {
-  const req = new Request(imgUrl);
-  const image = await req.loadImage();
-  
-  const wImg = widget.addImage(image);
-  wImg.centerAlign();
-  wImg.imageSize = new Size(130, 130);
-} catch (e) {
-  const errorText = widget.addText("⚠️ Картинку не знайдено");
-  errorText.textColor = Color.red();
-  errorText.centerAlign();
-  errorText.font = Font.boldSystemFont(12);
-}
+const wImg = widget.addImage(image);
+wImg.centerAlign();
+
 if (config.runsInWidget) {
   Script.setWidget(widget);
 } else {
-  await widget.presentSmall(); 
+  await widget.presentSmall();
 }
 
 Script.complete();
