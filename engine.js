@@ -1,45 +1,48 @@
-// 🚀 ПОВНИЙ І ГОТОВИЙ КОД ДЛЯ SCRIPTABLE
+// 🚀 ПОВНИЙ КОД З ЧІТКИМ РОЗМІРОМ КАРТИНКИ
 
 const widget = new ListWidget();
 widget.backgroundColor = new Color("#0a0c10");
 
-// Дефолтне посилання, якщо файл порожній або ще не створився
 let imgUrl = "https://widgetuse.github.io/id1.png";
 
 try {
   const fm = FileManager.iCloud();
   
-  // 1. Шлях до папки Shortcuts/wu/link.txt
+  // 1. Шлях до Shortcuts/wu/link.txt
   const scriptableDir = fm.documentsDirectory();
   const shortcutsDir = scriptableDir.replace("iCloud~dk~simonbs~Scriptable", "iCloud~is~workflow~my~workflows");
   const path = fm.joinPath(shortcutsDir, "wu/link.txt");
 
-  // 2. Читаємо файл
+  // 2. Читаємо URL з файлу
   if (fm.fileExists(path)) {
     if (!fm.isFileDownloaded(path)) {
       await fm.downloadFileFromiCloud(path);
     }
-    
-    // Очищаємо URL від пробілів та некоректних символів
     const rawContent = fm.readString(path).trim().replace(/[\r\n\t]+/g, "");
     if (rawContent.length > 0) {
       imgUrl = rawContent;
     }
   }
 
-  // 3. Качаємо PNG картинку з GitHub
+  // 3. Качаємо картинку з GitHub
   const req = new Request(imgUrl);
   const image = await req.loadImage();
   
-  // 4. Малюємо картинку на віджеті (тут centerAlign працює ідеально)
+  // 4. 🔥 МАГІЯ ВИДНОСТІ: Додаємо спейсери та чіткий розмір!
+  widget.addSpacer(); 
+  
   const wImg = widget.addImage(image);
   wImg.centerAlign();
+  wImg.imageSize = new Size(130, 130); // 👈 Фіксуємо розмір під Small віджет 2х2!
+  
+  widget.addSpacer();
 
 } catch (err) {
-  // ⚠️ Фолбек: просто виводимо текст БЕЗ функцій центрування, щоб точно не падало!
+  widget.addSpacer();
   const errTxt = widget.addText("❌ Не вдалося завантажити:\n" + imgUrl);
   errTxt.textColor = Color.red();
   errTxt.font = Font.boldSystemFont(9);
+  widget.addSpacer();
 }
 
 // 5. Рендеримо UI
