@@ -1,4 +1,4 @@
-// 🚀 ПОВНИЙ І РОБОЧИЙ ДВИГУН ВІДЖЕТА ДЛЯ SCRIPTABLE
+// 🚀 ПОВНИЙ І ГОТОВИЙ КОД ДЛЯ SCRIPTABLE
 
 const widget = new ListWidget();
 widget.backgroundColor = new Color("#0a0c10");
@@ -9,12 +9,12 @@ let imgUrl = "https://widgetuse.github.io/id1.png";
 try {
   const fm = FileManager.iCloud();
   
-  // 1. Переходимо в папку Shortcuts/wu/link.txt
+  // 1. Шлях до папки Shortcuts/wu/link.txt
   const scriptableDir = fm.documentsDirectory();
   const shortcutsDir = scriptableDir.replace("iCloud~dk~simonbs~Scriptable", "iCloud~is~workflow~my~workflows");
   const path = fm.joinPath(shortcutsDir, "wu/link.txt");
 
-  // 2. Зчитуємо файл
+  // 2. Читаємо файл
   if (fm.fileExists(path)) {
     if (!fm.isFileDownloaded(path)) {
       await fm.downloadFileFromiCloud(path);
@@ -31,16 +31,15 @@ try {
   const req = new Request(imgUrl);
   const image = await req.loadImage();
   
-  // 4. Малюємо картинку на віджеті
+  // 4. Малюємо картинку на віджеті (тут centerAlign працює ідеально)
   const wImg = widget.addImage(image);
-  wImg.centerAlign(); // 👈 centerAlign() для картинок
+  wImg.centerAlign();
 
 } catch (err) {
-  // ⚠️ Фолбек: якщо 404 або немає інету — виводимо текст
+  // ⚠️ Фолбек: просто виводимо текст БЕЗ функцій центрування, щоб точно не падало!
   const errTxt = widget.addText("❌ Не вдалося завантажити:\n" + imgUrl);
   errTxt.textColor = Color.red();
   errTxt.font = Font.boldSystemFont(9);
-  errTxt.centerAlign(); // 👈 ТУТ ТАКОЖ centerAlign(), А НЕ centerAligned()!
 }
 
 // 5. Рендеримо UI
