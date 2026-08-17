@@ -1,4 +1,0 @@
-id1: test
-id2: test
-id3: anime-girl
-id4: money-face
